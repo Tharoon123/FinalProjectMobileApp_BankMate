@@ -10,7 +10,7 @@ import Dashboard from "./DashboardScreen";
 
 const Stack =createNativeStackNavigator();
 
-//hellooo
+
 export default function Index() {
   return (
     <View
