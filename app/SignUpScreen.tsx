@@ -4,10 +4,13 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dime
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback, Animated } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 export default function SignUpScreen() {
+  const navigation = useNavigation()
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -104,7 +107,7 @@ export default function SignUpScreen() {
         />
       </View>
 
-      <TouchableWithoutFeedback onPress={animateButtonPress}>
+      <TouchableWithoutFeedback onPress={()=>navigation.navigate("LoginScreen")}>
         <Animated.View style={[styles.loginButton, { transform: [{ scale: scaleValue }] }]}>
           <Text style={styles.loginButtonText}>Sign Up</Text>
         </Animated.View>
@@ -112,7 +115,7 @@ export default function SignUpScreen() {
 
       <View style={styles.signupContainer}>
         <Text style={styles.signupText}>Already have an account?</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("LoginScreen")}>
           <Text style={styles.signupLink}> Login</Text>
         </TouchableOpacity>
       </View>
