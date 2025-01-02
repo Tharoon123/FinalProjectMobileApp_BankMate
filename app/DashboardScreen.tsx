@@ -142,7 +142,7 @@ export default function Dashboard() {
 
             <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
               <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
-              <Text style={styles.buttonText}>Transfers</Text>
+              <Text style={styles.buttonText} >Transfers</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>

@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TransactionScreen from "./TransactionScreen";
 import Dashboard from "./DashboardScreen";
+import MapScreen from "./MapScreen";
 
 const Stack =createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function Index() {
           <Stack.Screen name="SettingsScreen" component={SettingsScreen}></Stack.Screen>
           <Stack.Screen name="TransactionScreen" component={TransactionScreen}></Stack.Screen>
           <Stack.Screen name="Dashboard" component={Dashboard}></Stack.Screen>
+          <Stack.Screen name="MapScreen" component={MapScreen}></Stack.Screen>
           
         </Stack.Navigator>
     </View>
