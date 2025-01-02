@@ -5,8 +5,11 @@ import {
     StyleSheet,
     SafeAreaView,
     Dimensions,
+    ActivityIndicator
   } from 'react-native';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 // Get screen width and height
 const { width, height } = Dimensions.get('window');
@@ -34,6 +37,46 @@ const transactions = [
 
 
 const TransactionScreen = () => {
+  const [transactions2, setTransactions2] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                // Retrieve the userId from AsyncStorage
+                const userId = await AsyncStorage.getItem('userId');
+
+                if (userId) {
+                    // Fetch transactions from the API
+                    const response = await axios.get(`http://10.0.2.2:5000/getTransactions/${userId}`);
+                    const formattedTransactions =response.data.map((item) => ({
+                        id: `TXN ${String(item.TRANSACTION_ID).padStart(6, '0')}`, // Format ID as TXN 000001
+                        amount: item.AMOUNT,
+                        status: item.STATUS === 1 ? 'Pass' : 'Fail', // Assuming 1 is "Pass" and 0 is "Fail"
+                        date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
+                    }));
+                    setTransactions2(formattedTransactions)
+                    
+                }
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTransactions();
+    }, []);
+
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.safeArea}>
+                <ActivityIndicator size="large" color="#004BA0" />
+            </SafeAreaView>
+        );
+    }
+
+  
   return (
     
     <SafeAreaView style={styles.safeArea}>
@@ -45,7 +88,7 @@ const TransactionScreen = () => {
           style={styles.scrollView}
           contentContainerStyle={styles.contentContainer}
         >
-          {transactions.map((item) => (
+          {transactions2.map((item) => (
             <View key={item.id} style={styles.card}>
               <View style={styles.row}>
                 <Text style={styles.label}>Transaction ID:</Text>
