@@ -5,7 +5,10 @@ import {
     StyleSheet,
     SafeAreaView,
     Dimensions,
-    ActivityIndicator
+    ActivityIndicator,
+    Button,
+    Linking,
+    Alert
   } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +18,7 @@ import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 // Transactions Array
+/*
 const transactions = [
   { id: 'TXN123456', amount: '100.00', status: 'Pass', date: '14 Dec 2024, 10:15 AM' },
   { id: 'TXN789012', amount: '200.00', status: 'Fail', date: '13 Dec 2024, 08:20 PM' },
@@ -33,7 +37,7 @@ const transactions = [
   { id: 'TXN678789', amount: '150.00', status: 'Pass', date: '30 Nov 2024, 10:10 AM' },
   { id: 'TXN789890', amount: '100.00', status: 'Pass', date: '29 Nov 2024, 04:50 PM' },
   { id: 'TXN890567', amount: '200.00', status: 'Fail', date: '28 Nov 2024, 09:30 PM' },
-];
+];*/
 
 
 const TransactionScreen = () => {
@@ -54,7 +58,8 @@ const TransactionScreen = () => {
                         amount: item.AMOUNT,
                         status: item.STATUS === 1 ? 'Pass' : 'Fail', // Assuming 1 is "Pass" and 0 is "Fail"
                         date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
-                    }));
+                        location: item.LOCATION
+                      }));
                     setTransactions2(formattedTransactions)
                     
                 }
@@ -76,6 +81,22 @@ const TransactionScreen = () => {
         );
     }
 
+    
+    const openGoogleMaps = (qry: String) => {
+      //console.log(transactions2)
+      const url = `https://www.google.com/maps/search/?api=1&query=${qry}`; // Example for Colombo, Sri Lanka
+
+      // Check if the device can open the URL (i.e., if Google Maps is available)
+      Linking.canOpenURL(url)
+          .then((supported) => {
+              if (supported) {
+                  Linking.openURL(url);
+              } else {
+                  Alert.alert('Error', 'Google Maps is not available on this device.');
+              }
+          })
+          .catch((err) => console.error('Error opening Google Maps', err));
+  };
   
   return (
     
@@ -113,6 +134,11 @@ const TransactionScreen = () => {
                 <Text style={styles.label}>Date/Time:</Text>
                 <Text style={styles.value}>{item.date}</Text>
               </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Location</Text>
+                <Text style={styles.value}>{item.location}</Text>
+              </View>
+              <Button title="Open Google Maps" onPress={()=>openGoogleMaps(item.location)}/>
             </View>
           ))}
         </ScrollView>
