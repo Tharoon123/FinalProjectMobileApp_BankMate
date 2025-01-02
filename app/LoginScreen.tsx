@@ -1,30 +1,55 @@
 // Import necessary libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback, Animated } from 'react-native';
-import { Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
-  
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [scaleValue] = useState(new Animated.Value(1));
 
-  const handleLogin = () => {
-    if (email === '' || password === '') {
+  const handleLogin = async () => {
+    if (username === '' || password === '') {
       Alert.alert('Error', 'Please fill in all fields.');
     } else {
-      // Placeholder for authentication logic
-      Alert.alert('Login', 'You have successfully logged in!');
+      try {
+        const response = await fetch(`http://10.0.2.2:5000/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        });
+
+        if (response.ok) {
+          
+          const data = await response.json();
+          console.log(data)
+          // Store userId in AsyncStorage
+          await AsyncStorage.setItem('userId', data.userId.toString());
+
+          // Optionally store other user-related data
+          Alert.alert('Login', 'You have successfully logged in!');
+          navigation.navigate('DashboardScreen');
+        } else {
+          Alert.alert('Error', 'Invalid credentials');
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert('Error', 'An error occurred while trying to log in');
+      }
     }
   };
 
@@ -44,70 +69,67 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={['#00b894', '#ffffff']} style={styles.container}>
-      
-      <View style={styles.logoContainer}>
-      
-        <Image 
-          source={require('../assets/images/image.png')} // Replace with your logo
-          style={styles.logo}
-        />
-        <Text style={styles.appTitle}>BankMate</Text>
-      </View>
+      <LinearGradient colors={['#00b894', '#ffffff']} style={styles.container}>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your email"
-          placeholderTextColor="rgba(0, 0, 0, 0.6)"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            placeholder="Enter your password"
-            placeholderTextColor="rgba(0, 0, 0, 0.6)"
-            secureTextEntry={!passwordVisible}
-            value={password}
-            onChangeText={setPassword}
+        <View style={styles.logoContainer}>
+          <Image
+              source={require('../assets/images/image.png')} // Replace with your logo
+              style={styles.logo}
           />
-          <TouchableOpacity
-            onPress={() => setPasswordVisible(!passwordVisible)}
-            style={styles.iconContainer}
-          >
-            <Ionicons
-              name={passwordVisible ? 'eye' : 'eye-off'}
-              size={24}
-              color="#00b894"
+          <Text style={styles.appTitle}>BankMate</Text>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Username</Text>
+          <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              placeholderTextColor="rgba(0, 0, 0, 0.6)"
+              autoCapitalize="none"
+              value={username}
+              onChangeText={setUsername}
+          />
+
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder="Enter your password"
+                placeholderTextColor="rgba(0, 0, 0, 0.6)"
+                secureTextEntry={!passwordVisible}
+                value={password}
+                onChangeText={setPassword}
             />
+            <TouchableOpacity
+                onPress={() => setPasswordVisible(!passwordVisible)}
+                style={styles.iconContainer}
+            >
+              <Ionicons
+                  name={passwordVisible ? 'eye' : 'eye-off'}
+                  size={24}
+                  color="#00b894"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <TouchableWithoutFeedback onPress={animateButtonPress}>
+          <Animated.View style={[styles.loginButton, { transform: [{ scale: scaleValue }] }]}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </Animated.View>
+        </TouchableWithoutFeedback>
+
+        <TouchableOpacity style={styles.forgotPasswordButton}>
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don’t have an account?</Text>
+          <TouchableOpacity>
+            <Text style={styles.signupLink}> Sign Up</Text>
           </TouchableOpacity>
         </View>
-      </View>
-      
-      <TouchableWithoutFeedback onPress={()=>navigation.navigate("DashboardScreen")}>
-        <Animated.View style={[styles.loginButton, { transform: [{ scale: scaleValue }] }]}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </Animated.View>
-      </TouchableWithoutFeedback>
-    
-
-      <TouchableOpacity style={styles.forgotPasswordButton}>
-        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-      </TouchableOpacity>
-
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Don’t have an account?</Text>
-        <TouchableOpacity onPress={()=>navigation.navigate("SignUpScreen")}>
-          <Text style={styles.signupLink}> Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
   );
 }
 
@@ -132,7 +154,7 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#',
+    color: '#000',
     marginTop: 10,
   },
   inputContainer: {
@@ -140,7 +162,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   label: {
-    color: '#',
+    color: '#000',
     fontSize: 16,
     marginBottom: 5,
   },

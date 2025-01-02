@@ -1,146 +1,158 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Dashboard() {
-
-    const navigation = useNavigation()
-
-  const totalAssets = 10000 + 25000 + 15000; 
-  const totalLiabilities = 120000 + 15000 + 1200; 
-  const netWorth = totalAssets - totalLiabilities; 
+  const navigation = useNavigation();
+  const [name, setName] = useState('');
+  const [balance, setBalance] = useState(0);
+  const [number, setNumber] = useState('');
 
   const backgroundUrl = 'https://images.unsplash.com/photo-1541727984615-478cae0653d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=720&q=80';
-  
-  const accountNumber = '1234 5678 9012 3456';
-  
-  
   const BANK_LOGO_URL = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bank_of_America_logo.svg/320px-Bank_of_America_logo.svg.png';
-
-  
   const cardBackgroundUrl = 'https://images.unsplash.com/photo-1605286637612-c2beac0e048f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-
-  
   const CARD_BRAND_LOGO_URL = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png';
 
+  const fetchData = async () => {
+    try {
+      // Get userId from AsyncStorage
+      const userId = await AsyncStorage.getItem('userId');
+
+      if (userId) {
+        // Fetch balance, name, and number from the API
+        const response = await fetch(`http://10.0.2.2:5000/getBalance/${userId}`);
+        const data = await response.json();
+
+        setName(data.name);
+        setBalance(data.balance);
+        setNumber(data.number);
+      } else {
+        console.log('User ID not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const totalAssets = 10000 + 25000 + 15000;
+  const totalLiabilities = 120000 + 15000 + 1200;
+  const netWorth = totalAssets - totalLiabilities;
+
   return (
-    <ImageBackground 
-      source={{ uri: backgroundUrl }}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ImageBackground source={{ uri: backgroundUrl }} style={styles.backgroundImage} resizeMode="cover">
+        <ScrollView contentContainerStyle={styles.container}>
 
-        {/* Header Section with Logo, Greeting and Logout */}
-        <View style={styles.headerRow}>
-          <View style={styles.logoAndGreeting}>
-            <Image source={{ uri: BANK_LOGO_URL }} style={styles.bankLogo} />
-            <View style={styles.greetingContainer}>
-              <Text style={styles.greetingText}>Welcome Back, Tharoon!</Text>
-              <Text style={styles.subTitle}>Your Financial Snapshot</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.logoutButton}>
-            <MaterialCommunityIcons name="logout" size={24} color="red" onPress={()=>navigation.navigate("LoginScreen")} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Account Card Section with Blue Gradient */}
-        <View style={styles.accountCardContainer}>
-          <ImageBackground
-            source={{ uri: cardBackgroundUrl }}
-            style={styles.accountCardBackground}
-            imageStyle={{ borderRadius: 12 }}
-          >
-            <View style={styles.accountCardOverlay}>
-
-              {/* Top Row: Bank Icon & Title */}
-              <View style={styles.cardHeader}>
-                <MaterialCommunityIcons name="bank" size={20} color="#fff" />
-                <Text style={styles.cardHeaderText}>Your Account</Text>
+          {/* Header Section with Logo, Greeting and Logout */}
+          <View style={styles.headerRow}>
+            <View style={styles.logoAndGreeting}>
+              <Image source={{ uri: BANK_LOGO_URL }} style={styles.bankLogo} />
+              <View style={styles.greetingContainer}>
+                <Text style={styles.greetingText}>Welcome Back, {name || 'Loading...'}!</Text>
+                <Text style={styles.subTitle}>Your Financial Snapshot</Text>
               </View>
+            </View>
+            <TouchableOpacity style={styles.logoutButton}>
+              <MaterialCommunityIcons name="logout" size={24} color="red" onPress={() => navigation.navigate("LoginScreen")} />
+            </TouchableOpacity>
+          </View>
 
-              {/* Card Body with Chip and Account Number */}
-              <View style={styles.cardBody}>
-                <View style={styles.chipContainer}>
-                  <View style={styles.chip} />
+          {/* Account Card Section with Blue Gradient */}
+          <View style={styles.accountCardContainer}>
+            <ImageBackground source={{ uri: cardBackgroundUrl }} style={styles.accountCardBackground} imageStyle={{ borderRadius: 12 }}>
+              <View style={styles.accountCardOverlay}>
+
+                {/* Top Row: Bank Icon & Title */}
+                <View style={styles.cardHeader}>
+                  <MaterialCommunityIcons name="bank" size={20} color="black" />
+                  <Text style={styles.cardHeaderText}>Your Account</Text>
                 </View>
-                <Text style={styles.accountNumber}>{accountNumber}</Text>
-                <Text style={styles.accountNoLabel}>Account No</Text>
-              </View>
 
-              {/* Bottom Right: Card Brand Logo */}
-              <View style={styles.cardFooter}>
-                <Image source={{ uri: CARD_BRAND_LOGO_URL }} style={styles.cardBrandLogo} resizeMode="contain" />
+                {/* Card Body with Chip and Account Number */}
+                <View style={styles.cardBody}>
+                  <View style={styles.chipContainer}>
+                    <View style={styles.chip} />
+                  </View>
+                  <Text style={styles.accountNumber}>{number || 'Loading...'}</Text>
+                  <Text style={styles.accountNoLabel}>Account No</Text>
+                </View>
+
+                {/* Bottom Right: Card Brand Logo */}
+                <View style={styles.cardFooter}>
+                  <Image source={{ uri: CARD_BRAND_LOGO_URL }} style={styles.cardBrandLogo} resizeMode="contain" />
+                </View>
               </View>
+            </ImageBackground>
+          </View>
+
+          {/* Net Worth Overview Card */}
+          <View style={styles.netWorthContainer}>
+            <Text style={styles.netWorthTitle}>Net Worth</Text>
+            <Text style={styles.netWorthValue}>LKR {balance}</Text>
+            <Text style={styles.netWorthSubtitle}>
+              Based on your current assets & liabilities
+            </Text>
+          </View>
+
+          {/* Assets Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <MaterialCommunityIcons name="bank" size={24} color="#004BA0" style={styles.sectionIcon} />
+              <Text style={styles.sectionTitle}>Assets</Text>
             </View>
-          </ImageBackground>
-        </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Savings Account</Text>
+              <Text style={styles.value}>{balance}</Text>
+            </View>
 
-        {/* Net Worth Overview Card */}
-        <View style={styles.netWorthContainer}>
-          <Text style={styles.netWorthTitle}>Net Worth</Text>
-          <Text style={styles.netWorthValue}>LKR {netWorth.toLocaleString()}</Text>
-          <Text style={styles.netWorthSubtitle}>
-            Based on your current assets & liabilities
-          </Text>
-        </View>
-
-        {/* Assets Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="bank" size={24} color="#004BA0" style={styles.sectionIcon} />
-            <Text style={styles.sectionTitle}>Assets</Text>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Fixed Deposits</Text>
+              <Text style={styles.value}>LKR 15,000</Text>
+            </View>
           </View>
-          <View style={styles.dataRow}>
-            <Text style={styles.label}>Savings Account</Text>
-            <Text style={styles.value}>LKR 10,000</Text>
-          </View>
-          
-          <View style={styles.dataRow}>
-            <Text style={styles.label}>Fixed Deposits</Text>
-            <Text style={styles.value}>LKR 15,000</Text>
-          </View>
-        </View>
 
-        {/* Liabilities Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="finance" size={24} color="#8B0000" style={styles.sectionIcon} />
-            <Text style={styles.sectionTitle}>Liabilities</Text>
+          {/* Liabilities Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <MaterialCommunityIcons name="finance" size={24} color="#8B0000" style={styles.sectionIcon} />
+              <Text style={styles.sectionTitle}>Liabilities</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Home Loan</Text>
+              <Text style={styles.value}>LKR 120,000</Text>
+            </View>
+
+            <View style={styles.dataRow}>
+              <Text style={styles.label}>Credit Card</Text>
+              <Text style={styles.value}>LKR 1,200</Text>
+            </View>
           </View>
-          <View style={styles.dataRow}>
-            <Text style={styles.label}>Home Loan</Text>
-            <Text style={styles.value}>LKR 120,000</Text>
+
+          {/* Navigation Buttons (Non-functional) */}
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
+              <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("TransactionScreen")}>Transactions</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
+              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText}>Transfers</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
+              <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("SettingsScreen")}>Settings</Text>
+            </TouchableOpacity>
           </View>
-          
-          <View style={styles.dataRow}>
-            <Text style={styles.label}>Credit Card</Text>
-            <Text style={styles.value}>LKR 1,200</Text>
-          </View>
-        </View>
 
-        {/* Navigation Buttons (Non-functional) */}
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
-            <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
-            <Text style={styles.buttonText} onPress={()=>navigation.navigate("TransactionScreen")}>Transactions</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
-            <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Transfers</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
-            <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}  onPress={()=>navigation.navigate("SettingsScreen")}>Settings</Text>
-          </TouchableOpacity>
-        </View>
-
-      </ScrollView>
-    </ImageBackground>
+        </ScrollView>
+      </ImageBackground>
   );
 }
 
@@ -197,7 +209,7 @@ const styles = StyleSheet.create({
   },
   accountCardOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)', 
+    backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: 12,
     padding: 20,
     justifyContent: 'space-between'
@@ -209,7 +221,7 @@ const styles = StyleSheet.create({
   cardHeaderText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: 'black',
     marginLeft: 8,
   },
   cardBody: {
@@ -228,13 +240,13 @@ const styles = StyleSheet.create({
   accountNumber: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#fff',
+    color: '#033392',
     letterSpacing: 3,
     marginBottom: 5,
   },
   accountNoLabel: {
     fontSize: 12,
-    color: '#ddd',
+    color: 'black',
   },
   cardFooter: {
     alignSelf: 'flex-end',
@@ -334,12 +346,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   buttonTransactions: {
-    backgroundColor: '#F5E5C0', 
+    backgroundColor: '#F5E5C0',
   },
   buttonTransfers: {
-    backgroundColor: '#CFE3FC', 
+    backgroundColor: '#CFE3FC',
   },
   buttonSettings: {
-    backgroundColor: '#D5EFD1', 
+    backgroundColor: '#D5EFD1',
   },
 });
