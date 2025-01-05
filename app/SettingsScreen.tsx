@@ -24,7 +24,7 @@ const SettingsScreen = () => {
           description="Edit your profile details"
           left={() => <List.Icon icon="account-circle" />}
           style={styles.listItem}
-        />
+          onPress={()=>navigation.navigate("EditProfileScreen")}/>
         <List.Item
           title="Privacy"
           description="Manage privacy settings"

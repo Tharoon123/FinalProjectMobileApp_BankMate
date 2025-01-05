@@ -8,17 +8,17 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
-export default function SignUpScreen() {
+export default function ForgotPassScreen() {
   const navigation = useNavigation()
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [nic, setNic] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [scaleValue] = useState(new Animated.Value(1));
 
-  const handleSignUp = () => {
+  /*const handleSignUp = () => {
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
     } else if (password !== confirmPassword) {
@@ -26,7 +26,7 @@ export default function SignUpScreen() {
     } else {
       Alert.alert('Success', 'Account created successfully!');
     }
-  };
+  };*/
 
   const animateButtonPress = () => {
     Animated.sequence([
@@ -50,28 +50,27 @@ export default function SignUpScreen() {
           source={require('../assets/images/image.png')} // Updated with the provided image
           style={styles.logo}
         />
-        <Text style={styles.appTitle}>Sign Up</Text>
+        <Text style={styles.appTitle}>Change Password</Text>
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Name</Text>
+        <Text style={styles.label}>Full Name</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your name"
+          placeholder="Enter your name as per in the Bank Account"
           placeholderTextColor="rgba(0, 0, 0, 0.6)"
           value={name}
           onChangeText={setName}
         />
 
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>ID Number</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your email"
+          placeholder="Enter your National Identity Card Number"
           placeholderTextColor="rgba(0, 0, 0, 0.6)"
-          keyboardType="email-address"
           autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
+          value={nic}
+          onChangeText={setNic}
         />
 
         <Text style={styles.label}>Password</Text>
@@ -109,19 +108,22 @@ export default function SignUpScreen() {
 
       <TouchableWithoutFeedback onPress={()=>navigation.navigate("LoginScreen")}>
         <Animated.View style={[styles.loginButton, { transform: [{ scale: scaleValue }] }]}>
-          <Text style={styles.loginButtonText}>Sign Up</Text>
+          <Text style={styles.loginButtonText}>Save Changes</Text>
         </Animated.View>
       </TouchableWithoutFeedback>
 
-      <View style={styles.signupContainer}>
+      
+    </LinearGradient>
+  );
+}
+/*
+<View style={styles.signupContainer}>
         <Text style={styles.signupText}>Already have an account?</Text>
         <TouchableOpacity onPress={()=>navigation.navigate("LoginScreen")}>
           <Text style={styles.signupLink}> Login</Text>
         </TouchableOpacity>
       </View>
-    </LinearGradient>
-  );
-}
+*/
 
 const styles = StyleSheet.create({
   container: {
