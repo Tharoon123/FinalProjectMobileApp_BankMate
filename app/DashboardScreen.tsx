@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapScreen from './MapScreen';
 
 export default function Dashboard() {
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [balance, setBalance] = useState(0);
   const [number, setNumber] = useState('');
+  const [nic, setNic] = useState('');
 
   const backgroundUrl = 'https://images.unsplash.com/photo-1541727984615-478cae0653d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=720&q=80';
   const BANK_LOGO_URL = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bank_of_America_logo.svg/320px-Bank_of_America_logo.svg.png';
@@ -28,6 +30,8 @@ export default function Dashboard() {
         setName(data.name);
         setBalance(data.balance);
         setNumber(data.number);
+        setNic(data.nic)
+
       } else {
         console.log('User ID not found in AsyncStorage');
       }
@@ -95,8 +99,9 @@ export default function Dashboard() {
             <Text style={styles.netWorthTitle}>Net Worth</Text>
             <Text style={styles.netWorthValue}>LKR {balance}</Text>
             <Text style={styles.netWorthSubtitle}>
-              Based on your current assets & liabilities
+              Based on your current assets & liabilities             
             </Text>
+            
           </View>
 
           {/* Assets Section */}

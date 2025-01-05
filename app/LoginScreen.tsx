@@ -119,19 +119,23 @@ export default function LoginScreen() {
           </Animated.View>
         </TouchableWithoutFeedback>
 
-        <TouchableOpacity style={styles.forgotPasswordButton}>
+        
+      </LinearGradient>
+  );
+}
+
+/*
+<TouchableOpacity style={styles.forgotPasswordButton}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don’t have an account?</Text>
           <TouchableOpacity>
-            <Text style={styles.signupLink}> Sign Up</Text>
+            <Text style={styles.signupLink} onPress={()=>navigation.navigate("SignUpScreen")}> Sign Up</Text>
           </TouchableOpacity>
         </View>
-      </LinearGradient>
-  );
-}
+*/
 
 const styles = StyleSheet.create({
   container: {
@@ -218,3 +222,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
