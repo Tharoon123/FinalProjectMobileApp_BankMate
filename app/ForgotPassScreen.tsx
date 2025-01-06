@@ -1,10 +1,11 @@
 // Import necessary libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions, Button, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Mailer from 'react-native-mail';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,15 +19,15 @@ export default function ForgotPassScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [scaleValue] = useState(new Animated.Value(1));
 
-  /*const handleSignUp = () => {
-    if (!name || !email || !password || !confirmPassword) {
+  const handleSignUp = () => {
+    if (!name || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
     } else if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match.');
     } else {
       Alert.alert('Success', 'Account created successfully!');
     }
-  };*/
+  };
 
   const animateButtonPress = () => {
     Animated.sequence([
@@ -42,9 +43,20 @@ export default function ForgotPassScreen() {
       }),
     ]).start(() => handleSignUp());
   };
+  const handleEmail = () => {
+    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Your%20Subject&body=Email%20body';
+    Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
+  };
 
   return (
-    <LinearGradient colors={['#00b894', '#ffffff']} style={styles.container}>
+    <View>
+      <Button title="Send Email" onPress={handleEmail} />
+    </View>
+  );
+}
+/*
+
+<LinearGradient colors={['#00b894', '#ffffff']} style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
           source={require('../assets/images/image.png')} // Updated with the provided image
@@ -114,9 +126,7 @@ export default function ForgotPassScreen() {
 
       
     </LinearGradient>
-  );
-}
-/*
+
 <View style={styles.signupContainer}>
         <Text style={styles.signupText}>Already have an account?</Text>
         <TouchableOpacity onPress={()=>navigation.navigate("LoginScreen")}>

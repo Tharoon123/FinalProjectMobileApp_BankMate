@@ -1,6 +1,6 @@
 // Import necessary libraries
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, Dimensions, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback, Animated } from 'react-native';
@@ -67,6 +67,14 @@ export default function LoginScreen() {
       }),
     ]).start(() => handleLogin());
   };
+  const handleEmailForgotPassword = () => {
+    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Password%20Change&body=Please%20Enter%20Your%20UserID%20and%20Password%20in%20here';
+    Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
+  };
+  const handleEmailCreateAccount = () => {
+    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Userd%20Creation&body=Please%20Enter%20Your%20Bank%20Account%20Number%20and%20Password%20in%20here';
+    Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
+  };
 
   return (
       <LinearGradient colors={['#00b894', '#ffffff']} style={styles.container}>
@@ -118,6 +126,16 @@ export default function LoginScreen() {
             <Text style={styles.loginButtonText}>Login</Text>
           </Animated.View>
         </TouchableWithoutFeedback>
+        <TouchableOpacity style={styles.forgotPasswordButton}>
+          <Text style={styles.forgotPasswordText} onPress={handleEmailForgotPassword}>Forgot Password?</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don’t have an account?</Text>
+          <TouchableOpacity>
+            <Text style={styles.signupLink}  onPress={handleEmailCreateAccount} > Sign Up</Text>
+        </TouchableOpacity>
+        </View>
 
         
       </LinearGradient>
@@ -125,7 +143,7 @@ export default function LoginScreen() {
 }
 
 /*
-<TouchableOpacity style={styles.forgotPasswordButton}>
+        <TouchableOpacity style={styles.forgotPasswordButton}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
