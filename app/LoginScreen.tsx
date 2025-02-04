@@ -72,7 +72,7 @@ export default function LoginScreen() {
     Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
   };
   const handleEmailCreateAccount = () => {
-    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Userd%20Creation&body=Please%20Enter%20Your%20Bank%20Account%20Number%20and%20Password%20in%20here';
+    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20User%20Creation&body=Please%20Enter%20Your%20Bank%20Account%20Number%20and%20Password%20in%20here';
     Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
   };
 
