@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, Image} from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, Image, TouchableOpacity} from 'react-native';
 import { Avatar } from 'react-native-paper';
 
 export default function EditProfileScreen(){
@@ -64,74 +65,131 @@ export default function EditProfileScreen(){
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.avatarContainer}>
-      <Image
-          source={require('../assets/images/image.png')} // Updated with the provided image
-          style={styles.logo}
+    <View >
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.avatarContainer}>
+        <Image
+            source={require('../assets/images/image.png')} // Updated with the provided image
+            style={styles.logo}
+          />
+          
+          <Text style={styles.changePhotoText}>Change Account Password</Text>
+        </View>
+
+        {/* Full Name */}
+        <Text style={styles.label}>Full Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your full name"
+          value={name}
+          onChangeText={setName}
         />
-        
-        <Text style={styles.changePhotoText}>Change Account Password</Text>
-      </View>
 
-      {/* Full Name */}
-      <Text style={styles.label}>Full Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your full name"
-        value={name}
-        onChangeText={setName}
-      />
+        {/* NIC Number */}
+        <Text style={styles.label}>National Identity Card Number</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your NIC Number"
+          value={nic}
+          keyboardType="email-address"
+          onChangeText={setNic}
+        />
 
-      {/* NIC Number */}
-      <Text style={styles.label}>National Identity Card Number</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your NIC Number"
-        value={nic}
-        keyboardType="email-address"
-        onChangeText={setNic}
-      />
+        {/* Current Password */}
+        <Text style={styles.label}>Current Password</Text>
+        <TextInput
+          secureTextEntry
+          style={styles.input}
+          placeholder="Enter your Current Password"
+          value={currPass}
+          onChangeText={setCurrPass}
+        />
 
-      {/* Current Password */}
-      <Text style={styles.label}>Current Password</Text>
-      <TextInput
-        secureTextEntry
-        style={styles.input}
-        placeholder="Enter your Current Password"
-        value={currPass}
-        onChangeText={setCurrPass}
-      />
+        {/* New Password */}
+        <Text style={styles.label}>New Password</Text>
+        <TextInput
+          secureTextEntry
+          style={styles.input}
+          placeholder="Enter your New Password"
+          value={newPass}
+          onChangeText={setNewPass}
+        />
+        {/* Confirm New Password */}
+        <Text style={styles.label}>Confirm New Password</Text>
+        <TextInput
+          secureTextEntry
+          style={styles.input}
+          placeholder="Enter your New Password Again"
+          value={confirmPass}
+          onChangeText={setConfirmPass}
+        />
 
-      {/* New Password */}
-      <Text style={styles.label}>New Password</Text>
-      <TextInput
-        secureTextEntry
-        style={styles.input}
-        placeholder="Enter your New Password"
-        value={newPass}
-        onChangeText={setNewPass}
-      />
-      {/* Confirm New Password */}
-      <Text style={styles.label}>Confirm New Password</Text>
-      <TextInput
-        secureTextEntry
-        style={styles.input}
-        placeholder="Enter your New Password Again"
-        value={confirmPass}
-        onChangeText={setConfirmPass}
-      />
+        {/* Save Button */}
+        <TouchableOpacity style={[styles.button, styles.buttonSettings]}>
+          <MaterialCommunityIcons name="content-save" size={18} color="#333" style={styles.buttonIcon} />   
+          <Text style={styles.buttonText} onPress={handleSubmit} >Save Changes</Text>   
+        </TouchableOpacity>
+      </ScrollView>
+      {/* Navigation Buttons (Non-functional) */}
+      <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
+              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("DashboardScreen")} >Dashboard</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
+              <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("TransactionScreen")}>Transactions</Text>
+            </TouchableOpacity>
 
-      {/* Save Button */}
-      <View style={styles.buttonContainer}>
-        <Button title="Save Changes" onPress={handleSubmit} color="green" />
-      </View>
-    </ScrollView>
+            
+
+            <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
+              <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("SettingsScreen")}>Settings</Text>
+            </TouchableOpacity>
+          </View>
+    </View>
   );
 };
 
 // Styles
 const styles = StyleSheet.create({
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
+  buttonTransactions: {
+    backgroundColor: '#F5E5C0',
+  },
+  buttonSettings: {
+    backgroundColor: '#D5EFD1',
+  },
+  buttonTransfers: {
+    backgroundColor: '#CFE3FC',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom:10,
+    marginHorizontal: 5,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
+    borderColor: '#DDD',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
   container: {
     padding: 20,
     backgroundColor: '#f9f9f9', // Light background

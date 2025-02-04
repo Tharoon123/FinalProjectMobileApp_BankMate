@@ -8,11 +8,14 @@ import {
     ActivityIndicator,
     Button,
     Linking,
-    Alert
+    Alert,
+    TouchableOpacity
   } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 // Get screen width and height
 const { width, height } = Dimensions.get('window');
@@ -42,7 +45,9 @@ const transactions = [
 
 const TransactionScreen = () => {
   const [transactions2, setTransactions2] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  const navigation = useNavigation();
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -142,11 +147,65 @@ const TransactionScreen = () => {
             </View>
           ))}
         </ScrollView>
+        {/* Navigation Buttons (Non-functional) */}
+        <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
+              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={()=>navigation.navigate("DashboardScreen")}>Dashboard</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
+              <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} >Transactions</Text>
+            </TouchableOpacity>
+
+            
+
+            <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
+              <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} onPress={() => navigation.navigate("SettingsScreen")}>Settings</Text>
+            </TouchableOpacity>
+          </View>
       </View>
     </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
+  buttonTransactions: {
+    backgroundColor: '#F5E5C0',
+  },
+  buttonSettings: {
+    backgroundColor: '#D5EFD1',
+  },
+  buttonTransfers: {
+    backgroundColor: '#CFE3FC',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom:10,
+    marginHorizontal: 5,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
+    borderColor: '#DDD',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
     safeArea: {
       flex: 1,
       backgroundColor: '#f4f4f4',
