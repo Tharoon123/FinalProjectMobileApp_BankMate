@@ -6,7 +6,7 @@ import ForgotPassScreen from "./ForgotPassScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TransactionScreen from "./TransactionScreen";
-import Dashboard from "./DashboardScreen";
+import DashboardScreen from "./DashboardScreen";
 import MapScreen from "./MapScreen";
 import EditProfileScreen from "./EditProfileScreen";
 
@@ -29,7 +29,7 @@ export default function Index() {
           <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen}></Stack.Screen>
           <Stack.Screen name="SettingsScreen" component={SettingsScreen}></Stack.Screen>
           <Stack.Screen name="TransactionScreen" component={TransactionScreen}></Stack.Screen>
-          <Stack.Screen name="Dashboard" component={Dashboard}></Stack.Screen>
+          <Stack.Screen name="DashboardScreen" component={DashboardScreen}></Stack.Screen>
           <Stack.Screen name="MapScreen" component={MapScreen}></Stack.Screen>
           <Stack.Screen name="EditProfileScreen" component={EditProfileScreen}></Stack.Screen>
           

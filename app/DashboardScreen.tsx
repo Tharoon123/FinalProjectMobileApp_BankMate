@@ -57,7 +57,7 @@ export default function Dashboard() {
             <View style={styles.logoAndGreeting}>
               <Image source={{ uri: BANK_LOGO_URL }} style={styles.bankLogo} />
               <View style={styles.greetingContainer}>
-                <Text style={styles.greetingText}>Welcome Back, {name || 'Loading...'}!</Text>
+                <Text style={styles.greetingText}>Welcome Back,{'\n'}{name || 'Loading...'}!</Text>
                 <Text style={styles.subTitle}>Your Financial Snapshot</Text>
               </View>
             </View>
@@ -138,25 +138,27 @@ export default function Dashboard() {
             </View>
           </View>
 
-          {/* Navigation Buttons (Non-functional) */}
-          <View style={styles.buttonsContainer}>
+          
+
+        </ScrollView>
+        {/* Navigation Buttons (Non-functional) */}
+        <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
+              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
+              <Text style={styles.buttonText} >Dashboard</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
               <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
               <Text style={styles.buttonText} onPress={() => navigation.navigate("TransactionScreen")}>Transactions</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
-              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
-              <Text style={styles.buttonText} >Transfers</Text>
-            </TouchableOpacity>
+            
 
             <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
               <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
               <Text style={styles.buttonText} onPress={() => navigation.navigate("SettingsScreen")}>Settings</Text>
             </TouchableOpacity>
           </View>
-
-        </ScrollView>
       </ImageBackground>
   );
 }
@@ -329,6 +331,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     flexDirection: 'row',
+    marginBottom:10,
     marginHorizontal: 5,
     paddingVertical: 12,
     borderRadius: 8,
