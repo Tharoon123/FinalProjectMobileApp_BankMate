@@ -1,8 +1,12 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, Image} from 'react-native';
 import { Avatar } from 'react-native-paper';
 
-const EditProfileScreen = () => {
+export default function EditProfileScreen(){
+
+  const navigation = useNavigation();
+
   // State for form fields
   const [name, setName] = useState('');
   const [nic, setNic] = useState('');
@@ -11,18 +15,52 @@ const EditProfileScreen = () => {
   const [confirmPass, setConfirmPass] = useState('');
   
   // Function to handle form submission
-  const handleSubmit = () => {
-    if (!name) {
-      Alert.alert('Name is required');
+  const handleSubmit = async () => {
+    if (!name || !nic || !currPass || !newPass || !confirmPass) {
+      Alert.alert('Empty Field', 'Please fill in all fields');
+    }else{
+      if(newPass !== confirmPass){
+        Alert.alert('Password Mismatch', 'New Password and Confirm Password do not match');
+      }else{
+        try {
+          // Send form data to the server
+          const response = await fetch(`http://10.0.2.2:5000/editUserServerSide`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name,
+              nic,
+              currPass,
+              newPass,
+              confirmPass
+            }),
+          });
+    
+          if(response.ok){
+            const data = await response.json();
+            console.log(data);
+            Alert.alert('Password Change Success', 'Your password has been changed successfully');
+            navigation.navigate('LoginScreen');
+          }else{
+            console.log('Error',response.status,response);
+          }
+          
+          // Show success message
+          
+        } catch (error) {
+          console.error(error);
+          Alert.alert('Error', 'An error occurred while updating your profile');
+        }
+      }
     }
     
-    if (!nic) {
-      Alert.alert('NIC is required');
-    }
+      
+
     
-    //Alert.alert('Profile Updated', `Your profile has been updated successfully!`);
-    // Add your logic to send data to the backend API
-  
+    
+
   };
 
   return (
@@ -72,7 +110,6 @@ const EditProfileScreen = () => {
         style={styles.input}
         placeholder="Enter your New Password"
         value={newPass}
-        multiline
         onChangeText={setNewPass}
       />
       {/* Confirm New Password */}
@@ -82,7 +119,6 @@ const EditProfileScreen = () => {
         style={styles.input}
         placeholder="Enter your New Password Again"
         value={confirmPass}
-        multiline
         onChangeText={setConfirmPass}
       />
 
@@ -136,4 +172,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfileScreen;
+
