@@ -25,7 +25,7 @@ export default function EditProfileScreen(){
       }else{
         try {
           // Send form data to the server
-          const response = await fetch(`http://10.0.2.2:5000/editUserServerSide`, {
+          const response = await fetch(`http://13.127.178.202:5000/editUserServerSide`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -45,6 +45,7 @@ export default function EditProfileScreen(){
             Alert.alert('Password Change Success', 'Your password has been changed successfully');
             navigation.navigate('LoginScreen');
           }else{
+            Alert.alert('Check Credentials', 'No user found with the provided credentials');
             console.log('Error',response.status,response);
           }
           
@@ -80,7 +81,7 @@ export default function EditProfileScreen(){
         <Text style={styles.label}>Full Name</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your full name"
+          placeholder="Enter your User ID"
           value={name}
           onChangeText={setName}
         />
