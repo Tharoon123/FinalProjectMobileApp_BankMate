@@ -68,7 +68,8 @@ export default function LoginScreen() {
     ]).start(() => handleLogin());
   };
   const handleEmailForgotPassword = () => {
-    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Password%20Change&body=Please%20Enter%20Your%20UserID%20and%20Password%20in%20here';
+    const body='Password%20Cannot%20Be%20Changed%20due%20to%20Security%20Reasons.%20Need%20to%20Create%20a%20new%20user%20account%20\nPlease%20Enter%20Your%20Username%20and%20Password%20in%20below\n\n%20User%20Name%20:%20\n%20NIC%20Number%20:%20\n';
+    const email = `mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Password%20Change&body=${body}`;
     Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
   };
   const handleEmailCreateAccount = () => {
