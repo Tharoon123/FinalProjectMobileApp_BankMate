@@ -9,7 +9,8 @@ import {
     Button,
     Linking,
     Alert,
-    TouchableOpacity
+    TouchableOpacity,
+    TextInput
   } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,10 +18,10 @@ import axios from 'axios';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-// Get screen width and height
+// height with
 const { width, height } = Dimensions.get('window');
 
-// Transactions Array
+// harcode transactions
 /*
 const transactions = [
   { id: 'TXN123456', amount: '100.00', status: 'Pass', date: '14 Dec 2024, 10:15 AM' },
@@ -47,34 +48,38 @@ const TransactionScreen = () => {
   const [transactions2, setTransactions2] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [filterName, setfilterName] = useState('');
+
   const navigation = useNavigation();
 
+  // Load Transactions from the backend
+
+  const fetchTransactions = async () => {
+    try {
+        
+        const userId = await AsyncStorage.getItem('userId');
+
+        if (userId) {
+            
+            const response = await axios.get(`http://10.0.2.2:5000/getTransactions/${userId}`);
+            const formattedTransactions =response.data.map((item) => ({
+                id: `TXN ${String(item.ID).padStart(6, '0')}`, // Format ID as TXN 000001
+                amount: item.AMOUNT,
+                status: item.STATUS === 1 ? 'Pass' : 'Fail', // Assuming 1 is "Pass" and 0 is "Fail"
+                date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
+                location: item.LOCATION
+              }));
+            setTransactions2(formattedTransactions)
+            
+        }
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    } finally {
+        setLoading(false);
+    }
+};
+
     useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                // Retrieve the userId from AsyncStorage
-                const userId = await AsyncStorage.getItem('userId');
-
-                if (userId) {
-                    // Fetch transactions from the API
-                    const response = await axios.get(`http://10.0.2.2:5000/getTransactions/${userId}`);
-                    const formattedTransactions =response.data.map((item) => ({
-                        id: `TXN ${String(item.ID).padStart(6, '0')}`, // Format ID as TXN 000001
-                        amount: item.AMOUNT,
-                        status: item.STATUS === 1 ? 'Pass' : 'Fail', // Assuming 1 is "Pass" and 0 is "Fail"
-                        date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
-                        location: item.LOCATION
-                      }));
-                    setTransactions2(formattedTransactions)
-                    
-                }
-            } catch (error) {
-                console.error('Error fetching transactions:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchTransactions();
     }, []);
 
@@ -102,14 +107,62 @@ const TransactionScreen = () => {
           })
           .catch((err) => console.error('Error opening Google Maps', err));
   };
+
+
+  const filterTransactions = () => {
+    
+    console.log(filterName)
+    if(filterName === 'Pass' || filterName === 'Fail' || filterName === 'pass' || filterName === 'fail' || filterName === 'PASS' || filterName !==''){ 
+      if(filterName === 'Pass' || filterName === 'pass'){
+        var filteredTransactions = transactions2.filter((item) => item.status === 'Pass');
+        setTransactions2(filteredTransactions);
+
+      }
+      if(filterName === 'Fail' || filterName === 'fail'){
+        
+        const filteredTransactions = transactions2.filter((item) => item.status === 'Fail');
+        setTransactions2(filteredTransactions);
+      }
+      
+    }else{
+      console.log("Invalid Filter") 
+      Alert.alert('Invalid Filter', 'Please enter Pass or Fail to filter transactions');
+    
+    }
+
+  }
   
+  const handleCancelFilter = () => {
+    setfilterName(""); 
+    fetchTransactions();
+
+  
+  };
   return (
     
     <SafeAreaView style={styles.safeArea}>
         
       <View style={styles.container}>
         
-        <Text style={styles.title}>Transaction History</Text>
+        <Text style={styles.title}>Transaction Report</Text>
+        <View style={styles.filterContainer}>
+          <TextInput 
+            style={styles.input}
+            placeholder="Pass or Fail"
+            placeholderTextColor="rgba(0, 0, 0, 0.6)"
+            autoCapitalize="none"
+            onChangeText={setfilterName}
+          />
+          <TouchableOpacity style={styles.filterButton} onPress={() =>{filterTransactions()}}>
+            <Text style={styles.filterButtonText}>Filter</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => {handleCancelFilter()}}>
+            <MaterialCommunityIcons name="close-circle" size={18} color="#fff" />
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+        
+
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.contentContainer}
@@ -170,6 +223,38 @@ const TransactionScreen = () => {
   )
 }
 const styles = StyleSheet.create({
+  cancelButton: {
+    marginLeft: 10,
+    backgroundColor: '#dc3545',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  filterButton: {
+    marginLeft: 10,
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  filterButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
@@ -188,6 +273,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
+  },
+  input: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#00b894',
+    width: '30%',
+    height: 40,
+    marginLeft: 25,
   },
   button: {
     flex: 1,
