@@ -22,7 +22,7 @@ export default function LoginScreen() {
       Alert.alert('Error', 'Please fill in all fields.');
     } else {
       try {
-        const response = await fetch(`http://13.127.178.202:5000/login`, {
+        const response = await fetch(`http://10.0.2.2:5000/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -57,7 +57,7 @@ const TransactionScreen = () => {
 
                 if (userId) {
                     // Fetch transactions from the API
-                    const response = await axios.get(`http://13.127.178.202:5000/getTransactions/${userId}`);
+                    const response = await axios.get(`http://10.0.2.2:5000/getTransactions/${userId}`);
                     const formattedTransactions =response.data.map((item) => ({
                         id: `TXN ${String(item.ID).padStart(6, '0')}`, // Format ID as TXN 000001
                         amount: item.AMOUNT,

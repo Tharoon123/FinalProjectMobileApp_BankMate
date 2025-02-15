@@ -24,7 +24,7 @@ export default function Dashboard() {
 
       if (userId) {
         // Fetch balance, name, and number from the API
-        const response = await fetch(`http://13.127.178.202:5000/getBalance/${userId}`);
+        const response = await fetch(`http://10.0.2.2:5000/getBalance/${userId}`);
         const data = await response.json();
 
         setName(data.name);

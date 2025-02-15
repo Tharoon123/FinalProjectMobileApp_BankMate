@@ -25,7 +25,7 @@ export default function EditProfileScreen(){
       }else{
         try {
           // Send form data to the server
-          const response = await fetch(`http://13.127.178.202:5000/editUserServerSide`, {
+          const response = await fetch(`http://10.0.2.2:5000/editUserServerSide`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
