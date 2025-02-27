@@ -1,25 +1,25 @@
 import {
-    View,
-    Text,
-    ScrollView,
-    StyleSheet,
-    SafeAreaView,
-    Dimensions,
-    ActivityIndicator,
-    Button,
-    Linking,
-    Alert,
-    TouchableOpacity,
-    TextInput
-  } from 'react-native';
-import React, { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+  ActivityIndicator,
+  Button,
+  Linking,
+  Alert,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 // height with
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 // harcode transactions
 /*
@@ -43,12 +43,11 @@ const transactions = [
   { id: 'TXN890567', amount: '200.00', status: 'Fail', date: '28 Nov 2024, 09:30 PM' },
 ];*/
 
-
 const TransactionScreen = () => {
   const [transactions2, setTransactions2] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [filterName, setfilterName] = useState('');
+  const [filterName, setfilterName] = useState("");
 
   const navigation = useNavigation();
 
@@ -56,311 +55,375 @@ const TransactionScreen = () => {
 
   const fetchTransactions = async () => {
     try {
-        
-        const userId = await AsyncStorage.getItem('userId');
+      const userId = await AsyncStorage.getItem("userId");
 
-        if (userId) {
-            
-            const response = await axios.get(`http://10.0.2.2:5000/getTransactions/${userId}`);
-            const formattedTransactions =response.data.map((item) => ({
-                id: `TXN ${String(item.ID).padStart(6, '0')}`, // Format ID as TXN 000001
-                amount: item.AMOUNT,
-                status: item.STATUS === 1 ? 'Pass' : 'Fail', // Assuming 1 is "Pass" and 0 is "Fail"
-                date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
-                location: item.LOCATION
-              }));
-            setTransactions2(formattedTransactions)
-            
-        }
-    } catch (error) {
-        console.error('Error fetching transactions:', error);
-    } finally {
-        setLoading(false);
-    }
-};
-
-    useEffect(() => {
-        fetchTransactions();
-    }, []);
-
-    if (loading) {
-        return (
-            <SafeAreaView style={styles.safeArea}>
-                <ActivityIndicator size="large" color="#004BA0" />
-            </SafeAreaView>
+      if (userId) {
+        const response = await axios.get(
+          `http://10.0.2.2:5000/getTransactions/${userId}`
         );
+        const formattedTransactions = response.data.map((item) => ({
+          id: `TXN ${String(item.ID).padStart(6, "0")}`, // Format ID as TXN 000001
+          amount: item.AMOUNT,
+          status: item.STATUS === 1 ? "Pass" : "Fail", // Assuming 1 is "Pass" and 0 is "Fail"
+          date: new Date(item.TIME).toLocaleString(), // Format the timestamp to a readable date/time
+          location: item.LOCATION,
+        }));
+        setTransactions2(formattedTransactions);
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setLoading(false);
     }
-
-    
-    const openGoogleMaps = (qry: String) => {
-      //console.log(transactions2)
-      const url = `https://www.google.com/maps/search/?api=1&query=${qry}`; // Example for Colombo, Sri Lanka
-
-      // Check if the device can open the URL (i.e., if Google Maps is available)
-      Linking.canOpenURL(url)
-          .then((supported) => {
-              if (supported) {
-                  Linking.openURL(url);
-              } else {
-                  Alert.alert('Error', 'Google Maps is not available on this device.');
-              }
-          })
-          .catch((err) => console.error('Error opening Google Maps', err));
   };
 
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ActivityIndicator size="large" color="#004BA0" />
+      </SafeAreaView>
+    );
+  }
+
+  const openGoogleMaps = (qry: String) => {
+    //console.log(transactions2)
+    const url = `https://www.google.com/maps/search/?api=1&query=${qry}`; // Example for Colombo, Sri Lanka
+
+    // Check if the device can open the URL (i.e., if Google Maps is available)
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Alert.alert("Error", "Google Maps is not available on this device.");
+        }
+      })
+      .catch((err) => console.error("Error opening Google Maps", err));
+  };
 
   const filterTransactions = () => {
-    
-    console.log(filterName)
-    if(filterName === 'Pass' || filterName === 'Fail' || filterName === 'pass' || filterName === 'fail' || filterName === 'PASS' || filterName !==''){ 
-      if(filterName === 'Pass' || filterName === 'pass'){
-        var filteredTransactions = transactions2.filter((item) => item.status === 'Pass');
+    console.log(filterName);
+    if (
+      filterName === "Pass" ||
+      filterName === "Fail" ||
+      filterName === "pass" ||
+      filterName === "fail" ||
+      filterName === "PASS" ||
+      filterName !== ""
+    ) {
+      if (filterName === "Pass" || filterName === "pass") {
+        var filteredTransactions = transactions2.filter(
+          (item) => item.status === "Pass"
+        );
         setTransactions2(filteredTransactions);
-
       }
-      if(filterName === 'Fail' || filterName === 'fail'){
-        
-        const filteredTransactions = transactions2.filter((item) => item.status === 'Fail');
+      if (filterName === "Fail" || filterName === "fail") {
+        const filteredTransactions = transactions2.filter(
+          (item) => item.status === "Fail"
+        );
         setTransactions2(filteredTransactions);
       }
-      
-    }else{
-      console.log("Invalid Filter") 
-      Alert.alert('Invalid Filter', 'Please enter Pass or Fail to filter transactions');
-    
+    } else {
+      console.log("Invalid Filter");
+      Alert.alert(
+        "Invalid Filter",
+        "Please enter Pass or Fail to filter transactions"
+      );
     }
-
-  }
-  
-  const handleCancelFilter = () => {
-    setfilterName(""); 
-    fetchTransactions();
-
-  
   };
+
+  const handleCancelFilter = () => {
+    setfilterName("");
+    fetchTransactions();
+  };
+
+
+  const handleReport = (item) => {
+    Alert.alert( 
+      "Transaction Report",
+      `Transaction ID: ${item.id}\nDate/Time: ${item.date}\nAmount: LKR ${item.amount} \nStatus: ${item.status}`,
+      [{ text: "OK" }]);
+  }
+
   return (
-    
     <SafeAreaView style={styles.safeArea}>
-        
       <View style={styles.container}>
-        
-        <Text style={styles.title}>Transaction Report</Text>
+        <Text style={styles.title}>Transaction History</Text>
         <View style={styles.filterContainer}>
-          <TextInput 
+          <TextInput
             style={styles.input}
             placeholder="Pass or Fail"
             placeholderTextColor="rgba(0, 0, 0, 0.6)"
             autoCapitalize="none"
             onChangeText={setfilterName}
           />
-          <TouchableOpacity style={styles.filterButton} onPress={() =>{filterTransactions()}}>
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => {
+              filterTransactions();
+            }}
+          >
             <Text style={styles.filterButtonText}>Filter</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => {handleCancelFilter()}}>
-            <MaterialCommunityIcons name="close-circle" size={18} color="#fff" />
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => {
+              handleCancelFilter();
+            }}
+          >
+            <MaterialCommunityIcons
+              name="close-circle"
+              size={18}
+              color="#fff"
+            />
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
-        
 
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.contentContainer}
         >
           {transactions2.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <View style={styles.row}>
-                <Text style={styles.label}>Transaction ID:</Text>
-                <Text style={styles.value}>{item.id}</Text>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => {handleReport(item)}}
+            >
+              <View style={styles.card}>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Transaction ID:</Text>
+                  <Text style={styles.value}>{item.id}</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Amount:</Text>
+                  <Text style={styles.value}>LKR {item.amount}</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Status:</Text>
+                  <Text
+                    style={[
+                      styles.status,
+                      item.status === "Pass"
+                        ? styles.statusPass
+                        : styles.statusFail,
+                    ]}
+                  >
+                    {item.status}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Date/Time:</Text>
+                  <Text style={styles.value}>{item.date}</Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Location:</Text>
+                  <Text style={styles.value}>{item.location}</Text>
+                </View>
+                <Button
+                  title="Open Google Maps"
+                  onPress={() => openGoogleMaps(item.location)}
+                />
               </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Amount:</Text>
-                <Text style={styles.value}>LKR {item.amount}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Status:</Text>
-                <Text
-                  style={[
-                    styles.status,
-                    item.status === 'Pass' ? styles.statusPass : styles.statusFail,
-                  ]}
-                >
-                  {item.status}
-                </Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Date/Time:</Text>
-                <Text style={styles.value}>{item.date}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.label}>Location</Text>
-                <Text style={styles.value}>{item.location}</Text>
-              </View>
-              <Button title="Open Google Maps" onPress={()=>openGoogleMaps(item.location)}/>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
+
         {/* Navigation Buttons (Non-functional) */}
         <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.button, styles.buttonTransfers]} onPress={() => {}}>
-              <MaterialCommunityIcons name="swap-horizontal" size={18} color="#333" style={styles.buttonIcon} />
-              <Text style={styles.buttonText} onPress={()=>navigation.navigate("DashboardScreen")}>Dashboard</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonTransactions]} onPress={() => {}}>
-              <MaterialCommunityIcons name="history" size={18} color="#333" style={styles.buttonIcon} />
-              <Text style={styles.buttonText} >Transactions</Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonTransfers]}
+            onPress={() => {}}
+          >
+            <MaterialCommunityIcons
+              name="swap-horizontal"
+              size={18}
+              color="#333"
+              style={styles.buttonIcon}
+            />
+            <Text
+              style={styles.buttonText}
+              onPress={() => navigation.navigate("DashboardScreen")}
+            >
+              Dashboard
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonTransactions]}
+            onPress={() => {}}
+          >
+            <MaterialCommunityIcons
+              name="history"
+              size={18}
+              color="#333"
+              style={styles.buttonIcon}
+            />
+            <Text style={styles.buttonText}>Transactions</Text>
+          </TouchableOpacity>
 
-            
-
-            <TouchableOpacity style={[styles.button, styles.buttonSettings]} onPress={() => {}}>
-              <MaterialCommunityIcons name="cog" size={18} color="#333" style={styles.buttonIcon} />
-              <Text style={styles.buttonText} onPress={() => navigation.navigate("SettingsScreen")}>Settings</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonSettings]}
+            onPress={() => {}}
+          >
+            <MaterialCommunityIcons
+              name="cog"
+              size={18}
+              color="#333"
+              style={styles.buttonIcon}
+            />
+            <Text
+              style={styles.buttonText}
+              onPress={() => navigation.navigate("SettingsScreen")}
+            >
+              Settings
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 const styles = StyleSheet.create({
   cancelButton: {
     marginLeft: 10,
-    backgroundColor: '#dc3545',
+    backgroundColor: "#dc3545",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
   },
   cancelButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     marginLeft: 5,
   },
   filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
   },
   filterButton: {
     marginLeft: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
     marginBottom: 15,
   },
   filterButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   buttonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   buttonTransactions: {
-    backgroundColor: '#F5E5C0',
+    backgroundColor: "#F5E5C0",
   },
   buttonSettings: {
-    backgroundColor: '#D5EFD1',
+    backgroundColor: "#D5EFD1",
   },
   buttonTransfers: {
-    backgroundColor: '#CFE3FC',
+    backgroundColor: "#CFE3FC",
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 10,
     padding: 10,
     fontSize: 16,
-    color: '#000',
+    color: "#000",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#00b894',
-    width: '30%',
+    borderColor: "#00b894",
+    width: "30%",
     height: 40,
     marginLeft: 25,
   },
   button: {
     flex: 1,
-    flexDirection: 'row',
-    marginBottom:10,
+    flexDirection: "row",
+    marginBottom: 10,
     marginHorizontal: 5,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#F5F5F5',
-    borderColor: '#DDD',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
+    borderColor: "#DDD",
     borderWidth: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
-    safeArea: {
-      flex: 1,
-      backgroundColor: '#f4f4f4',
-    },
-    container: {
-      flex: 1,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    contentContainer: {
-      paddingHorizontal: width * 0.05, // Adjust padding based on screen width
-      paddingBottom: height * 0.02, // Adjust padding based on screen height
-    },
-    title: {
-      fontSize: width * 0.06, // Responsive font size
-      fontWeight: 'bold',
-      color: '#333',
-      marginVertical: height * 0.03,
-      textAlign: 'center',
-    },
-    card: {
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      padding: width * 0.04, // Responsive padding
-      marginBottom: height * 0.02,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    },
-    row: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 8,
-    },
-    label: {
-      fontSize: width * 0.04,
-      fontWeight: 'bold',
-      color: '#555',
-    },
-    value: {
-      fontSize: width * 0.04,
-      color: '#333',
-    },
-    status: {
-      fontSize: width * 0.04,
-      fontWeight: 'bold',
-    },
-    statusPass: {
-      color: 'green',
-    },
-    statusFail: {
-      color: 'red',
-    },
-  });
-  
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f4f4f4",
+  },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: width * 0.05, // Adjust padding based on screen width
+    paddingBottom: height * 0.02, // Adjust padding based on screen height
+  },
+  title: {
+    fontSize: width * 0.06, // Responsive font size
+    fontWeight: "bold",
+    color: "#333",
+    marginVertical: height * 0.03,
+    textAlign: "center",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: width * 0.04, // Responsive padding
+    marginBottom: height * 0.02,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: width * 0.04,
+    fontWeight: "bold",
+    color: "#555",
+  },
+  value: {
+    fontSize: width * 0.04,
+    color: "#333",
+  },
+  status: {
+    fontSize: width * 0.04,
+    fontWeight: "bold",
+  },
+  statusPass: {
+    color: "green",
+  },
+  statusFail: {
+    color: "red",
+  },
+});
 
-export default TransactionScreen
+export default TransactionScreen;

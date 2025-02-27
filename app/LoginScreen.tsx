@@ -68,12 +68,14 @@ export default function LoginScreen() {
     ]).start(() => handleLogin());
   };
   const handleEmailForgotPassword = () => {
-    const body='Password%20Cannot%20Be%20Changed%20due%20to%20Security%20Reasons.%20Need%20to%20Create%20a%20new%20user%20account%20\nPlease%20Enter%20Your%20Username%20and%20Password%20in%20below\n\n%20User%20Name%20:%20\n%20NIC%20Number%20:%20\n';
+    const body1='Password%20Cannot%20Be%20Changed%20due%20to%20Security%20Reasons.%20Need%20to%20Create%20a%20new%20user%20account%20\nPlease%20Enter%20Your%20Username%20and%20Password%20in%20below\n\n%20User%20Name%20:%20\n%20NIC%20Number%20:%20\n';
+    const body=body1+'\nPlease Contact +94 11 32 64 745 For New User Creation\n\nThank you for your patience\nBankMate';
     const email = `mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20Password%20Change&body=${body}`;
     Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
   };
   const handleEmailCreateAccount = () => {
-    const email = 'mailto:tharoonnaveedya@gmail.com?subject=Requesting%20For%20User%20Creation&body=Please%20Enter%20Your%20Bank%20Account%20Number%20and%20Password%20in%20here';
+    const body="Please%20Enter%20Your%20Bank%20Account%20Number%20and%20Password%20in%20here";
+    const email = `mailto:tharoon@visiontechbs.com?subject=Requesting%20For%20User%20Creation&body=${body}`;
     Linking.openURL(email).catch((error) => console.error('Error opening email:', error));
   };
 
@@ -133,9 +135,17 @@ export default function LoginScreen() {
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don’t have an account?</Text>
+          
+        </View>
+        <View style={styles.signupContainer}>
           <TouchableOpacity>
-            <Text style={styles.signupLink}  onPress={handleEmailCreateAccount} > Sign Up</Text>
-        </TouchableOpacity>
+            <Text style={styles.signupLink}>Please Contact Bank Mate hotline</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.signupContainer}>
+          <TouchableOpacity>
+            <Text style={styles.signupText}>+94 11 32 64 745</Text>
+          </TouchableOpacity>
         </View>
 
         
